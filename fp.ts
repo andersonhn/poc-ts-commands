@@ -32,7 +32,7 @@ export const undo = (state: State, id: string): State => {
   };
 };
 
-export const initialState = { last: undefined, messages: [] };
+export const initialState: State = { last: undefined, messages: [] };
 
 export const sendMessages = (messages: Message[]): State[] => {
   const [succeeded, failed]: State[][] = [[], []];
