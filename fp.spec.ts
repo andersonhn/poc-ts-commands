@@ -1,4 +1,4 @@
-import { execute, initialState, State, undo, sendMessages } from "./fp";
+import { execute, initialState, State, revert, sendMessages } from "./fp";
 
 test("Creating message with empty text throws error", () => {
   expect.assertions(1);
@@ -24,13 +24,13 @@ test("Undo command that failed", () => {
     expect(error.message).toStrictEqual("Text should not be empty");
     expect(history).toHaveLength(1);
 
-    const state = undo(history[0], history[0].last!.id);
+    const state = revert(history[0], history[0].last!.id);
     expect(state).toStrictEqual(initialState);
   }
 });
 
 test("Trying to remove command not executed does nothing", () => {
-  const state: State = undo(execute(initialState, { text: "A" }), "123");
+  const state: State = revert(execute(initialState, { text: "A" }), "123");
 
   expect(state.messages).toHaveLength(1);
   expect(state.last!.text).toStrictEqual("A");

@@ -63,18 +63,18 @@ export class SendMessage implements Command {
   }
 }
 
-export class MessageDispatcher {
-  private history: Command[] = [];
+export class Commands {
+  private commands: Command[] = [];
 
-  dispatch(command: Command): void {
-    this.history.push(command);
+  add(command: Command): void {
+    this.commands.push(command);
   }
 
-  getHistory(): readonly Command[] {
+  executeAll(): readonly Command[] {
     const [succeeded, failed]: Command[][] = [[], []];
 
     try {
-      this.history.forEach((command: Command) => {
+      this.commands.forEach((command: Command) => {
         command.execute();
         succeeded.push(command);
       });

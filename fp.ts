@@ -23,7 +23,7 @@ export const execute = (state: State, message: Message): State => {
   };
 };
 
-export const undo = (state: State, id: string): State => {
+export const revert = (state: State, id: string): State => {
   const current = state.messages.filter((message) => message.id !== id);
 
   return {
@@ -47,7 +47,7 @@ export const sendMessages = (messages: Message[]): State[] => {
   } catch (error) {
     succeeded.reverse().forEach((state: State) => {
       failed.push(state);
-      undo(state, state.last!.id);
+      revert(state, state.last!.id);
     });
     return failed;
   }

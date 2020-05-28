@@ -3,7 +3,7 @@ import {
   InMemoryMessageDatabase,
   Command,
   SendMessage,
-  MessageDispatcher,
+  Commands,
 } from "./oop";
 
 test("Creating message with empty text throws error", () => {
@@ -60,28 +60,28 @@ test("Sending two commands successfully", () => {
 
 test("Undo every command sent in case of failure", () => {
   const database: MessageDatabase = new InMemoryMessageDatabase();
-  const dispatcher = new MessageDispatcher();
-  dispatcher.dispatch(new SendMessage({ text: "A" }, database));
-  dispatcher.dispatch(new SendMessage({ text: "B" }, database));
-  dispatcher.dispatch(new SendMessage({ text: "" }, database));
-  dispatcher.dispatch(new SendMessage({ text: "C" }, database));
+  const commands = new Commands();
+  commands.add(new SendMessage({ text: "A" }, database));
+  commands.add(new SendMessage({ text: "B" }, database));
+  commands.add(new SendMessage({ text: "" }, database));
+  commands.add(new SendMessage({ text: "C" }, database));
 
-  const history = dispatcher.getHistory();
+  const commandsExecuted = commands.executeAll();
 
-  expect(history).toHaveLength(2);
+  expect(commandsExecuted).toHaveLength(2);
   expect(database.read()).toHaveLength(0);
 });
 
 test("Sending all commands and inspecting history", () => {
   const database: MessageDatabase = new InMemoryMessageDatabase();
-  const dispatcher = new MessageDispatcher();
-  dispatcher.dispatch(new SendMessage({ text: "A" }, database));
-  dispatcher.dispatch(new SendMessage({ text: "B" }, database));
-  dispatcher.dispatch(new SendMessage({ text: "C" }, database));
+  const commands = new Commands();
+  commands.add(new SendMessage({ text: "A" }, database));
+  commands.add(new SendMessage({ text: "B" }, database));
+  commands.add(new SendMessage({ text: "C" }, database));
 
-  const history = dispatcher.getHistory();
+  const commandsExecuted = commands.executeAll();
 
-  expect(history).toHaveLength(3);
+  expect(commandsExecuted).toHaveLength(3);
   expect(database.read()).toHaveLength(3);
   expect(database.read()[0].text).toStrictEqual("A");
   expect(database.read()[1].text).toStrictEqual("B");
